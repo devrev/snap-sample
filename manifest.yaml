@@ -1,0 +1,41 @@
+version: "2"
+
+name: Snap Sample
+description: Snap Sample
+
+service_account:
+  display_name: Snap Sample Bot
+
+functions:
+  - name: extraction
+    description: Extraction function for Snap Sample
+  - name: install_initial_domain_mapping
+    description: Create blueprint and install initial domain mapping
+
+keyring_types:
+  - id: example-connection
+    name: Example Connection
+    description: Example Connection
+    kind: "Secret"
+    is_subdomain: true
+    secret_config:
+      secret_transform: ".token" # a JQ query
+      fields:
+        - id: token
+          name: Token
+          description: Example API token
+      token_verification:
+        urL: https://app.devrev.ai/favicon.ico
+        method: GET
+
+imports:
+  - slug: snap-sample-extractor
+    display_name: Snap Sample
+    description: Snap Sample
+    extractor_function: extraction
+    allowed_connection_types:
+      - example-connection
+
+hooks:
+  - type: activate
+    function: install_initial_domain_mapping
